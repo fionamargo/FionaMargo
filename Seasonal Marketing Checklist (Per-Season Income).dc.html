@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FAF6F1}
+  button{font-family:inherit;border:none;background:none}
+  input{font-family:inherit;outline:none}
+  ::selection{background:#DCE6D6}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#E2D9CD;border-radius:8px}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#FAF6F1;font-family:'Mulish',sans-serif;color:#5B554E;padding:46px 24px 80px">
+  <div style="max-width:1000px;margin:0 auto">
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:30px">
+      <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#B0A698;font-weight:600;margin-bottom:14px">Year-round marketing plan</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:54px;line-height:1.02;margin:0 0 12px;color:#4A443D">Your Year of Bookings</h1>
+      <p style="max-width:560px;margin:0 auto;font-size:16px;line-height:1.6;color:#7C7368">A season-by-season checklist where every quarter has its own session focus, booking channels, and income goal.</p>
+    </div>
+
+    <!-- Annual roll-up -->
+    <sc-if value="{{ showIncome }}" hint-placeholder-val="{{ true }}">
+    <div style="background:#F3F6F1;border:1px solid #DEE7DA;border-radius:20px;padding:24px 28px;margin-bottom:30px">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8FA286;font-weight:700;margin-bottom:6px">Annual income</div>
+          <div style="display:flex;align-items:baseline;gap:10px">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;color:#5E7257;line-height:1">{{ totalEarnedLabel }}</span>
+            <div style="position:relative">
+              <button onClick="{{ onToggleAnnualGoal }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #DCE7D6;border-radius:9px;padding:7px 12px;font-size:13.5px;font-weight:700;color:#6E7C66;cursor:pointer">Goal {{ totalGoalLabel }} <span style="color:#A7B6A0;font-size:11px">▾</span></button>
+              <sc-if value="{{ isAnnualGoalOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 6px);left:0;width:160px;background:#fff;border:1px solid #DCE7D6;border-radius:12px;box-shadow:0 14px 34px rgba(74,68,61,.16);padding:6px;z-index:50;max-height:300px;overflow:auto">
+                  <sc-for list="{{ annualGoalOptions }}" as="g" hint-placeholder-count="8">
+                    <div onClick="{{ g.onSelect }}" style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer" style-hover="background:#EEF3EB">
+                      <div style="{{ g.boxStyle }}"><sc-if value="{{ g.selected }}" hint-placeholder-val="{{ false }}"><span style="color:#fff;font-size:10px;font-weight:700;line-height:1">✓</span></sc-if></div>
+                      <span style="font-size:13.5px;color:#544E46;font-weight:600">{{ g.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#7E8E76;line-height:1">{{ totalPctInt }}%</div>
+          <div style="font-size:13px;color:#92897C;margin-top:2px">{{ totalStatus }}</div>
+        </div>
+      </div>
+      <div style="height:18px;background:#E4E9DF;border-radius:999px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(74,68,61,.07)">
+        <div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#9FB39A,#D9A79B,#D2A579,#A4B7C4);transition:width .6s cubic-bezier(.2,.8,.2,1);min-width:0;width: {{ totalPct }}%"></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- Seasons grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:20px">
+      <sc-for list="{{ seasonsView }}" as="se" hint-placeholder-count="4">
+        <div style="background:#fff;border:1px solid #EEE7DD;border-radius:18px;padding:22px 24px 14px;box-shadow:0 1px 3px rgba(74,68,61,.05)">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+            <div style="display:flex;align-items:center;gap:11px">
+              <span style="{{ se.dotStyle }}"></span>
+              <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:30px;color:#4A443D;margin:0;line-height:1">{{ se.name }}</h3>
+            </div>
+            <span style="{{ se.badgeStyle }}">{{ se.countLabel }}</span>
+          </div>
+          <div style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#B0A698;font-weight:600;margin-bottom:14px">{{ se.sub }}</div>
+
+          <!-- Per-season selectors -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px">
+            <div style="position:relative">
+              <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#A89F94;font-weight:700;margin-bottom:6px">Session focus</div>
+              <button onClick="{{ se.onToggleSessions }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#FBF8F4;border:1px solid #E7DFD5;border-radius:10px;padding:9px 11px;text-align:left;cursor:pointer">
+                <span style="font-size:13px;font-weight:600;color:#544E46;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ se.sessionsSummary }}</span>
+                <span style="color:#B6AC9E;font-size:11px;flex-shrink:0">▾</span>
+              </button>
+              <sc-if value="{{ se.isSessionsOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:190px;background:#fff;border:1px solid #ECE4D9;border-radius:12px;box-shadow:0 14px 34px rgba(74,68,61,.16);padding:6px;z-index:50">
+                  <sc-for list="{{ se.sessionOptions }}" as="opt" hint-placeholder-count="6">
+                    <div onClick="{{ opt.onToggle }}" style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer" style-hover="background:#F6F1EA">
+                      <div style="{{ opt.boxStyle }}"><sc-if value="{{ opt.selected }}" hint-placeholder-val="{{ false }}"><span style="color:#fff;font-size:10px;font-weight:700;line-height:1">✓</span></sc-if></div>
+                      <span style="font-size:13.5px;color:#544E46;font-weight:500">{{ opt.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <div style="position:relative">
+              <div style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#A89F94;font-weight:700;margin-bottom:6px">Booking channels</div>
+              <button onClick="{{ se.onToggleChannels }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#FBF8F4;border:1px solid #E7DFD5;border-radius:10px;padding:9px 11px;text-align:left;cursor:pointer">
+                <span style="font-size:13px;font-weight:600;color:#544E46;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ se.channelsSummary }}</span>
+                <span style="color:#B6AC9E;font-size:11px;flex-shrink:0">▾</span>
+              </button>
+              <sc-if value="{{ se.isChannelsOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:calc(100% + 6px);left:0;right:0;min-width:190px;background:#fff;border:1px solid #ECE4D9;border-radius:12px;box-shadow:0 14px 34px rgba(74,68,61,.16);padding:6px;z-index:50">
+                  <sc-for list="{{ se.channelOptions }}" as="opt" hint-placeholder-count="5">
+                    <div onClick="{{ opt.onToggle }}" style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer" style-hover="background:#F6F1EA">
+                      <div style="{{ opt.boxStyle }}"><sc-if value="{{ opt.selected }}" hint-placeholder-val="{{ false }}"><span style="color:#fff;font-size:10px;font-weight:700;line-height:1">✓</span></sc-if></div>
+                      <span style="font-size:13.5px;color:#544E46;font-weight:500">{{ opt.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <!-- Per-season income tracker -->
+          <sc-if value="{{ showIncome }}" hint-placeholder-val="{{ true }}">
+          <div style="{{ se.incomeBoxStyle }}">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:11px">
+              <div style="display:flex;align-items:baseline;gap:7px">
+                <span style="{{ se.earnedStyle }}">{{ se.earnedLabel }}</span>
+                <span style="font-size:13px;color:#93897C;font-weight:600">of {{ se.goalLabel }}</span>
+              </div>
+              <div style="position:relative">
+                <button onClick="{{ se.onToggleGoal }}" style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #E2DACF;border-radius:9px;padding:6px 10px;font-size:12.5px;font-weight:700;color:#6E665B;cursor:pointer">Goal {{ se.goalLabel }} <span style="color:#B6AC9E;font-size:11px">▾</span></button>
+                <sc-if value="{{ se.isGoalOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:calc(100% + 6px);right:0;width:150px;background:#fff;border:1px solid #ECE4D9;border-radius:12px;box-shadow:0 14px 34px rgba(74,68,61,.16);padding:6px;z-index:50">
+                    <sc-for list="{{ se.goalOptions }}" as="g" hint-placeholder-count="6">
+                      <div onClick="{{ g.onSelect }}" style="display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer" style-hover="background:#F6F1EA">
+                        <div style="{{ g.boxStyle }}"><sc-if value="{{ g.selected }}" hint-placeholder-val="{{ false }}"><span style="color:#fff;font-size:10px;font-weight:700;line-height:1">✓</span></sc-if></div>
+                        <span style="font-size:13.5px;color:#544E46;font-weight:600">{{ g.label }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+            <div style="height:14px;background:#EBE5DB;border-radius:999px;overflow:hidden">
+              <div style="{{ se.fillStyle }}"></div>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:11px">
+              <div style="display:flex;align-items:center;background:#fff;border:1px solid #E2DACF;border-radius:9px;padding:0 10px;height:36px">
+                <span style="color:#9AA593;font-weight:700;font-size:13.5px">$</span>
+                <input value="{{ se.addAmount }}" onChange="{{ se.onAddChange }}" onKeyDown="{{ se.onAddKey }}" placeholder="0" inputmode="numeric" style="border:none;background:none;width:62px;font-size:13.5px;font-weight:600;color:#544E46;padding:0 5px;height:36px" />
+              </div>
+              <button onClick="{{ se.addCustom }}" style="{{ se.addBtnStyle }}">Log</button>
+              <sc-for list="{{ se.quickChips }}" as="chip" hint-placeholder-count="2">
+                <button onClick="{{ chip.onClick }}" style="background:#fff;border:1px solid #E2DACF;border-radius:999px;padding:6px 11px;font-size:12.5px;font-weight:600;color:#6E665B;cursor:pointer" style-hover="background:#F6F1EA">{{ chip.label }}</button>
+              </sc-for>
+              <button onClick="{{ se.resetIncome }}" style="margin-left:auto;background:none;border:none;color:#B3A99D;font-size:12.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Reset</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <sc-for list="{{ se.tasks }}" as="task" hint-placeholder-count="5">
+            <div onClick="{{ task.onToggle }}" style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;cursor:pointer;border-top:1px solid #F2ECE3">
+              <div style="{{ task.boxStyle }}"><sc-if value="{{ task.checked }}" hint-placeholder-val="{{ false }}"><span style="color:#fff;font-size:12px;font-weight:700;line-height:1">✓</span></sc-if></div>
+              <div style="flex:1;padding-top:1px">
+                <span style="{{ task.textStyle }}">{{ task.label }}</span>
+                <sc-if value="{{ task.isChannel }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block;margin-left:8px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:#A89F94;background:#F2EDE6;padding:2px 8px;border-radius:999px;vertical-align:middle;font-weight:600">{{ task.channelLabel }}</span></sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- Footer progress -->
+    <div style="margin-top:30px;background:#fff;border:1px solid #EEE7DD;border-radius:16px;padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:18px">
+      <div style="flex:1;min-width:200px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px">
+          <span style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#A89F94">Checklist progress</span>
+          <span style="font-size:13px;color:#7C7368;font-weight:600">{{ progressLabel }}</span>
+        </div>
+        <div style="height:9px;background:#EFE9E0;border-radius:999px;overflow:hidden">
+          <div style="{{ progressFillStyle }}"></div>
+        </div>
+      </div>
+      <button onClick="{{ resetChecklist }}" style="background:none;border:1px solid #E7DFD5;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;color:#8A8175;cursor:pointer" style-hover="background:#F6F1EA">Clear all checks</button>
+    </div>
+
+  </div>
+
+  <sc-if value="{{ anyOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeDropdown }}" style="position:fixed;inset:0;z-index:40"></div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;primary&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#93A98C&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;showIncome&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+const KEY = 'fmp_seasonal_checklist_perseason_v2';
+
+const CHANNELS = [
+  { key: 'instagram', label: 'Instagram' },
+  { key: 'tiktok', label: 'TikTok' },
+  { key: 'email', label: 'Email list' },
+  { key: 'collaborations', label: 'Collaborations' },
+  { key: 'metaAds', label: 'Meta ads' },
+];
+
+const CHTASK = {
+  instagram: (s) => `Share ${s} sneak peeks + 2 reels on Instagram`,
+  tiktok: (s) => `Post a ${s} \u201cday in the life\u201d on TikTok`,
+  email: (s) => `Email your list the ${s} session announcement`,
+  collaborations: (s) => `Line up one ${s} collaboration (venue or brand)`,
+  metaAds: (s) => `Run a small Meta ad promoting ${s} sessions`,
+};
+
+const SESSIONS = [
+  { key: 'family', label: 'Family sessions' },
+  { key: 'newborn', label: 'Newborn sessions' },
+  { key: 'maternity', label: 'Maternity sessions' },
+  { key: 'studio', label: 'Studio sessions' },
+  { key: 'outdoorMinis', label: 'Outdoor minis' },
+  { key: 'studioMinis', label: 'Studio minis' },
+];
+
+const SHORT = {
+  family: 'Family', newborn: 'Newborn', maternity: 'Maternity',
+  studio: 'Studio', outdoorMinis: 'Outdoor minis', studioMinis: 'Studio minis',
+};
+
+const SEASONS = [
+  {
+    key: 'spring', name: 'Spring', sub: 'March \u2013 May', accent: '#9FB39A', tint: '#ECF1EA', defGoal: 1500,
+    core: [
+      'Set spring + Mother\u2019s Day mini dates and pricing',
+      'Refresh your portfolio and website with recent work',
+      'Reconnect with last year\u2019s maternity & newborn clients',
+      'Open online booking for spring dates',
+    ],
+    defSessions: ['maternity', 'outdoorMinis'],
+  },
+  {
+    key: 'summer', name: 'Summer', sub: 'June \u2013 August', accent: '#D9A79B', tint: '#F6ECE8', defGoal: 1000,
+    core: [
+      'Scout and lock fall mini-session locations & dates',
+      'Batch-create your fall marketing content now',
+      'Gather and post recent client testimonials',
+      'Open an early-bird fall waitlist',
+    ],
+    defSessions: ['family', 'outdoorMinis'],
+  },
+  {
+    key: 'fall', name: 'Fall', sub: 'September \u2013 November', accent: '#D2A579', tint: '#F4EADC', defGoal: 2500,
+    core: [
+      'Launch and fill your fall mini sessions',
+      'Remind clients about holiday card & gift sessions',
+      'Share daily sneak peeks during mini season',
+      'Upsell prints, albums & wall art at gallery reveals',
+    ],
+    defSessions: ['outdoorMinis', 'family'],
+  },
+  {
+    key: 'winter', name: 'Winter', sub: 'December \u2013 February', accent: '#A4B7C4', tint: '#E9EFF2', defGoal: 1000,
+    core: [
+      'Promote newborn & studio sessions for new babies',
+      'Send year-end thank-yous to your clients',
+      'Review the year\u2019s numbers and set next year\u2019s goal',
+      'Plan Q1 maternity & Valentine\u2019s minis',
+    ],
+    defSessions: ['newborn', 'studio'],
+  },
+];
+
+const GOALS = [500, 1000, 2500, 5000, 7500, 10000, 15000, 25000, 50000];
+const ANNUAL_GOALS = [8000, 12000, 16000, 24000, 32000, 50000, 75000, 100000, 150000, 200000];
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    let saved = null;
+    try { const raw = localStorage.getItem(KEY); if (raw) saved = JSON.parse(raw); } catch (e) {}
+    const defGoals = {}, zero = {}, blank = {}, defSessions = {}, defChannels = {};
+    SEASONS.forEach((se) => {
+      defGoals[se.key] = se.defGoal;
+      zero[se.key] = 0;
+      blank[se.key] = '';
+      defSessions[se.key] = se.defSessions.slice();
+      defChannels[se.key] = ['instagram', 'email'];
+    });
+    this.state = {
+      annualGoal: (saved && saved.annualGoal) || 16000,
+      seasonSessions: (saved && saved.seasonSessions) || defSessions,
+      seasonChannels: (saved && saved.seasonChannels) || defChannels,
+      seasonGoals: (saved && saved.seasonGoals) || defGoals,
+      seasonIncome: (saved && saved.seasonIncome) || zero,
+      checked: (saved && saved.checked) || {},
+      addAmounts: blank,
+      openDropdown: null,
+    };
+  }
+
+  componentDidUpdate() {
+    const s = this.state;
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        annualGoal: s.annualGoal,
+        seasonSessions: s.seasonSessions, seasonChannels: s.seasonChannels,
+        seasonGoals: s.seasonGoals, seasonIncome: s.seasonIncome, checked: s.checked,
+      }));
+    } catch (e) {}
+  }
+
+  money(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+  primary() { return this.props.primary || '#93A98C'; }
+
+  miniBox(sel) {
+    const p = this.primary();
+    return `width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;border:1.5px solid ${sel ? p : '#D8D0C6'};background:${sel ? p : '#fff'}`;
+  }
+
+  toggleDropdown(name) {
+    this.setState((st) => ({ openDropdown: st.openDropdown === name ? null : name }));
+  }
+  closeDropdown = () => this.setState({ openDropdown: null });
+
+  toggleSeasonArr(field, seasonKey, key) {
+    this.setState((st) => {
+      const map = Object.assign({}, st[field]);
+      const arr = (map[seasonKey] || []).slice();
+      const i = arr.indexOf(key);
+      if (i >= 0) arr.splice(i, 1); else arr.push(key);
+      map[seasonKey] = arr;
+      return { [field]: map };
+    });
+  }
+
+  chooseAnnualGoal(v) {
+    this.setState({ annualGoal: v, openDropdown: null });
+  }
+
+  chooseGoal(seasonKey, v) {
+    this.setState((st) => ({ seasonGoals: Object.assign({}, st.seasonGoals, { [seasonKey]: v }), openDropdown: null }));
+  }
+
+  toggleTask(id) {
+    this.setState((st) => ({ checked: Object.assign({}, st.checked, { [id]: !st.checked[id] }) }));
+  }
+
+  onAddChange(seasonKey, e) {
+    const v = e.target.value.replace(/[^0-9]/g, '');
+    this.setState((st) => ({ addAmounts: Object.assign({}, st.addAmounts, { [seasonKey]: v }) }));
+  }
+  addCustom(seasonKey) {
+    const n = parseInt(this.state.addAmounts[seasonKey] || '0', 10);
+    if (n > 0) this.setState((st) => ({
+      seasonIncome: Object.assign({}, st.seasonIncome, { [seasonKey]: (st.seasonIncome[seasonKey] || 0) + n }),
+      addAmounts: Object.assign({}, st.addAmounts, { [seasonKey]: '' }),
+    }));
+  }
+  addQuick(seasonKey, n) {
+    this.setState((st) => ({ seasonIncome: Object.assign({}, st.seasonIncome, { [seasonKey]: (st.seasonIncome[seasonKey] || 0) + n }) }));
+  }
+  resetIncome(seasonKey) {
+    this.setState((st) => ({ seasonIncome: Object.assign({}, st.seasonIncome, { [seasonKey]: 0 }) }));
+  }
+  resetChecklist = () => this.setState({ checked: {} });
+
+  taskView(id, label, checked, channelLabel) {
+    const p = this.primary();
+    return {
+      id, label, checked,
+      onToggle: () => this.toggleTask(id),
+      isChannel: !!channelLabel,
+      channelLabel: channelLabel || '',
+      boxStyle: `width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;border:1.5px solid ${checked ? p : '#D8D0C6'};background:${checked ? p : '#fff'}`,
+      textStyle: checked
+        ? 'font-size:14.5px;line-height:1.45;font-weight:500;color:#B7AEA2;text-decoration:line-through'
+        : 'font-size:14.5px;line-height:1.45;font-weight:500;color:#544E46',
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const checked = s.checked || {};
+    const showIncome = this.props.showIncome !== false;
+
+    let total = 0, done = 0, totalGoal = 0, totalIncome = 0;
+
+    const seasonsView = SEASONS.map((se) => {
+      const seSessions = s.seasonSessions[se.key] || [];
+      const seChannels = s.seasonChannels[se.key] || [];
+
+      const tasks = [];
+      se.core.forEach((label, i) => {
+        const id = se.key + '|core|' + i;
+        tasks.push(this.taskView(id, label, !!checked[id], null));
+      });
+      CHANNELS.forEach((ch) => {
+        if (seChannels.indexOf(ch.key) >= 0) {
+          const id = se.key + '|ch|' + ch.key;
+          tasks.push(this.taskView(id, CHTASK[ch.key](se.name.toLowerCase()), !!checked[id], ch.label));
+        }
+      });
+      const seasonDone = tasks.filter((t) => t.checked).length;
+      total += tasks.length; done += seasonDone;
+
+      const goal = s.seasonGoals[se.key] != null ? s.seasonGoals[se.key] : se.defGoal;
+      const income = s.seasonIncome[se.key] || 0;
+      totalGoal += goal; totalIncome += income;
+      const pct = goal > 0 ? Math.min(100, (income / goal) * 100) : 0;
+
+      return {
+        key: se.key, name: se.name, sub: se.sub,
+        tasks,
+        countLabel: seasonDone + '/' + tasks.length,
+        dotStyle: `width:11px;height:11px;border-radius:50%;flex-shrink:0;background:${se.accent}`,
+        badgeStyle: `font-size:12px;font-weight:700;color:${se.accent};background:${se.tint};padding:4px 11px;border-radius:999px`,
+
+        // selectors
+        sessionsSummary: seSessions.length ? seSessions.map((k) => SHORT[k]).join(', ') : 'Choose sessions',
+        channelsSummary: seChannels.length ? seChannels.map((k) => { const c = CHANNELS.find((x) => x.key === k); return c ? c.label : k; }).join(', ') : 'Choose channels',
+        isSessionsOpen: s.openDropdown === ('sessions|' + se.key),
+        isChannelsOpen: s.openDropdown === ('channels|' + se.key),
+        onToggleSessions: () => this.toggleDropdown('sessions|' + se.key),
+        onToggleChannels: () => this.toggleDropdown('channels|' + se.key),
+        sessionOptions: SESSIONS.map((o) => {
+          const sel = seSessions.indexOf(o.key) >= 0;
+          return { key: o.key, label: o.label, selected: sel, onToggle: () => this.toggleSeasonArr('seasonSessions', se.key, o.key), boxStyle: this.miniBox(sel) };
+        }),
+        channelOptions: CHANNELS.map((o) => {
+          const sel = seChannels.indexOf(o.key) >= 0;
+          return { key: o.key, label: o.label, selected: sel, onToggle: () => this.toggleSeasonArr('seasonChannels', se.key, o.key), boxStyle: this.miniBox(sel) };
+        }),
+
+        // income
+        incomeBoxStyle: `background:${se.tint};border-radius:13px;padding:14px 15px;margin:0 0 14px`,
+        earnedStyle: `font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;line-height:1;color:${se.accent}`,
+        earnedLabel: this.money(income),
+        goalLabel: this.money(goal),
+        fillStyle: `height:100%;border-radius:999px;background:${se.accent};transition:width .55s cubic-bezier(.2,.8,.2,1);min-width:0;width:${Math.round(pct * 10) / 10}%`,
+        addAmount: s.addAmounts[se.key] || '',
+        onAddChange: (e) => this.onAddChange(se.key, e),
+        onAddKey: (e) => { if (e.key === 'Enter') this.addCustom(se.key); },
+        addCustom: () => this.addCustom(se.key),
+        resetIncome: () => this.resetIncome(se.key),
+        addBtnStyle: `background:${se.accent};color:#fff;border-radius:9px;padding:0 15px;height:36px;font-size:13px;font-weight:700;cursor:pointer`,
+        quickChips: [
+          { label: '+ $250', onClick: () => this.addQuick(se.key, 250) },
+          { label: '+ $500', onClick: () => this.addQuick(se.key, 500) },
+        ],
+        isGoalOpen: s.openDropdown === ('goal|' + se.key),
+        onToggleGoal: () => this.toggleDropdown('goal|' + se.key),
+        goalOptions: GOALS.map((v) => ({ value: v, label: this.money(v), selected: v === goal, onSelect: () => this.chooseGoal(se.key, v), boxStyle: this.miniBox(v === goal) })),
+      };
+    });
+
+    const annualGoal = s.annualGoal || 16000;
+    const totalPct = annualGoal > 0 ? Math.min(100, (totalIncome / annualGoal) * 100) : 0;
+    const totalReached = totalIncome >= annualGoal && annualGoal > 0;
+    const progressPct = total ? Math.round((done / total) * 100) : 0;
+
+    return {
+      showIncome,
+      seasonsView,
+
+      totalEarnedLabel: this.money(totalIncome),
+      totalGoalLabel: this.money(annualGoal),
+      totalPct: Math.round(totalPct * 10) / 10,
+      totalPctInt: Math.round(totalPct),
+      totalStatus: totalReached ? 'Goal reached \u2014 beautiful work' : (this.money(Math.max(0, annualGoal - totalIncome)) + ' to go'),
+      isAnnualGoalOpen: s.openDropdown === 'annualGoal',
+      onToggleAnnualGoal: () => this.toggleDropdown('annualGoal'),
+      annualGoalOptions: ANNUAL_GOALS.map((v) => ({ value: v, label: this.money(v), selected: v === annualGoal, onSelect: () => this.chooseAnnualGoal(v), boxStyle: this.miniBox(v === annualGoal) })),
+
+      anyOpen: !!s.openDropdown,
+      closeDropdown: this.closeDropdown,
+
+      progressLabel: done + ' of ' + total + ' tasks complete',
+      progressFillStyle: `height:100%;border-radius:999px;background:${this.primary()};transition:width .5s ease;width:${progressPct}%`,
+      resetChecklist: this.resetChecklist,
+    };
+  }
+}
+</script>
+</body>
+</html>
